@@ -14,6 +14,6 @@ namespace DocumentManagement.DAL.Repositories
 
         Task DeleteAsync(string name, string id);
 
-        Task<DocumentEntity> UpdateAsync(DocumentEntity document);
+        Task<List<DocumentEntity>> UpdateAsync(List<DocumentEntity> documents);
     }
 }

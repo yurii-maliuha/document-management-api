@@ -45,9 +45,15 @@ namespace DocumentManagement.DAL.Repositories
             return createdDocumet;
         }
 
-        public async Task<DocumentEntity> UpdateAsync(DocumentEntity document)
+        public async Task<List<DocumentEntity>> UpdateAsync(List<DocumentEntity> documents)
         {
-            return await CreateOrUpdateAsync(document);
+            var updatedDocuments = new List<DocumentEntity>();
+            foreach (var document in documents)
+            {
+                updatedDocuments.Add(await CreateOrUpdateAsync(document));
+            }
+
+            return updatedDocuments;
         }
 
         public async Task<bool> ExistsAsync(string name, string id)

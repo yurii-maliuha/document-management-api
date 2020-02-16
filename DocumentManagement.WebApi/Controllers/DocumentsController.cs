@@ -47,7 +47,7 @@ namespace DocumentManagement.Controllers
             }
 
             var document = await _documentService.Create(file);
-            return CreatedAtAction(nameof(Create), new { id = document.Id }, document);
+            return document;
         }
 
         [HttpPatch]

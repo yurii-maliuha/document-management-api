@@ -70,8 +70,10 @@ namespace DocumentManagement.DAL.Services
                 }
 
                 document.Order = documents.IndexOf(documentPatch);
-                documentEntities.Add(await _documentRepository.UpdateAsync(document));
+                documentEntities.Add(document);
             }
+
+            await _documentRepository.UpdateAsync(documentEntities);
 
             var updatedDocument = documentEntities.OrderBy(d => d.Order)
                 .Select(d => d.ToDTO())

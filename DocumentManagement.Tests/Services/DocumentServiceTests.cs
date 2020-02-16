@@ -6,6 +6,7 @@ using DocumentManagement.Models.Exceptions;
 using NSubstitute;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -54,7 +55,7 @@ namespace DocumentManagement.Tests.Services
             //Act
             //Assert
             Assert.ThrowsAsync<DocumentNotFoundException>(
-                async () => await _documentService.Delete(blobName, id), 
+                async () => await _documentService.Delete(blobName, id),
                 $"Can not delete non existed file {blobName}");
         }
 
@@ -79,11 +80,9 @@ namespace DocumentManagement.Tests.Services
         {
             //Arrange
             _documentRepository.GetAll().Returns(DocumentServiceTestsData.UnsortedDocuments);
-            DocumentEntity passedDocument = null;
-            _documentRepository.UpdateAsync(Arg.Do<DocumentEntity>(d => passedDocument = d))
-                .ReturnsForAnyArgs((document) =>
-                    DocumentServiceTestsData.SortedDocuments.First(d => d.RowKey == passedDocument.RowKey)
-                 );
+            List<DocumentEntity> passedDocument = null;
+            _documentRepository.UpdateAsync(Arg.Do<List<DocumentEntity>>(d => passedDocument = d))
+                .ReturnsForAnyArgs((document) => passedDocument);
 
             //Act
             var updatedDocuments = await _documentService.UpdateDocumentsOrder(DocumentServiceTestsData.DocumentPatchModels);
