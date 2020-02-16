@@ -59,7 +59,7 @@ namespace DocumentManagement.DAL.Services
 
         public async Task<List<DocumentDTO>> UpdateDocumentsOrder(List<DocumentPatchModel> documents)
         {
-            var updatedDocuments = new List<DocumentDTO>();
+            var documentEntities = new List<DocumentEntity>();
             var documentsEntity = _documentRepository.GetAll();
             foreach (var document in documentsEntity)
             {
@@ -70,17 +70,31 @@ namespace DocumentManagement.DAL.Services
                 }
 
                 document.Order = documents.IndexOf(documentPatch);
-                var updatedDocument = await _documentRepository.UpdateAsync(document);
-                updatedDocuments.Add(updatedDocument.ToDTO());
+                documentEntities.Add(await _documentRepository.UpdateAsync(document));
             }
 
-            return updatedDocuments;
+            var updatedDocument = documentEntities.OrderBy(d => d.Order)
+                .Select(d => d.ToDTO())
+                .ToList();
+
+            return updatedDocument;
         }
 
         public async Task Delete(string name, string id)
         {
             var blobName = $"{id}_{name}";
-            await _fileUploadHelper.Delete(blobName);
+            if (!(await _fileUploadHelper.ExistsAsync(blobName)))
+            {
+                throw new DocumentNotFoundException($"Can not delete non existed file {blobName}");
+            }
+
+            await _fileUploadHelper.DeleteAsync(blobName);
+
+            if (! (await _documentRepository.ExistsAsync(name, id)))
+            {
+                throw new DocumentNotFoundException($"Cannot delete the nonexistent file {name} : {id}");
+            }
+
             await _documentRepository.DeleteAsync(name, id);
         }
     }

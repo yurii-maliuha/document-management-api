@@ -50,14 +50,15 @@ namespace DocumentManagement.DAL.Repositories
             return await CreateOrUpdateAsync(document);
         }
 
+        public async Task<bool> ExistsAsync(string name, string id)
+        {
+            var documentToDelete = await GetAsync(name, id);
+            return documentToDelete != null;
+        }
+
         public async Task DeleteAsync(string name, string id)
         {
             var documentToDelete = await GetAsync(name, id);
-            if(documentToDelete == null)
-            {
-                throw new DocumentNotFoundException($"Cannot delete the nonexistent file {name} : {id}");
-            }
-
             var deleteOperation = TableOperation.Delete(documentToDelete);
             await _azureUtils.CloudTable.ExecuteAsync(deleteOperation);
         }

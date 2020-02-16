@@ -7,6 +7,8 @@ namespace DocumentManagement.DAL.Helpers
     {
         Task<string> Upload(Stream file, string fileName);
 
-        Task Delete(string blobName);
+        Task<bool> ExistsAsync(string blobName);
+
+        Task DeleteAsync(string blobName);
     }
 }

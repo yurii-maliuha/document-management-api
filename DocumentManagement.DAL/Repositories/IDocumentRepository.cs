@@ -10,6 +10,8 @@ namespace DocumentManagement.DAL.Repositories
 
         Task<DocumentEntity> CreateAsync(DocumentEntity document);
 
+        Task<bool> ExistsAsync(string name, string id);
+
         Task DeleteAsync(string name, string id);
 
         Task<DocumentEntity> UpdateAsync(DocumentEntity document);

@@ -23,14 +23,15 @@ namespace DocumentManagement.DAL.Helpers
             return blockBlob.Uri.AbsoluteUri;
         }
 
-        public async Task Delete(string blobName)
+        public Task<bool> ExistsAsync(string blobName)
         {
             CloudBlockBlob blockBlob = _azureUtils.BlobContainer.GetBlockBlobReference(blobName);
-            if (!(await blockBlob.ExistsAsync()))
-            {
-                throw new DocumentNotFoundException($"Can not delete non existed file {blobName}");
-            }
+            return blockBlob.ExistsAsync();
+        }
 
+        public async Task DeleteAsync(string blobName)
+        {
+            CloudBlockBlob blockBlob = _azureUtils.BlobContainer.GetBlockBlobReference(blobName);
             await blockBlob.DeleteAsync();
         }
     }
