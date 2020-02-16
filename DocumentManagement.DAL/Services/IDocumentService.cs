@@ -1,12 +1,10 @@
 ﻿using DocumentManagement.Common.Models;
+using DocumentManagement.Models;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace DocumentManagement.WebApi.Services
+namespace DocumentManagement.DAL.Services
 {
     public interface IDocumentService
     {
@@ -16,6 +14,6 @@ namespace DocumentManagement.WebApi.Services
 
         Task Delete(string name, string id);
 
-        Task<List<DocumentDTO>> UpdateDocuments(List<DocumentPatchModel> documents);
+        Task<List<DocumentDTO>> UpdateDocumentsOrder(List<DocumentPatchModel> documents);
     }
 }

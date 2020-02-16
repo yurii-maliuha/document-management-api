@@ -1,13 +1,8 @@
-﻿using Microsoft.Azure.Storage;
-using Microsoft.Azure.Storage.Blob;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.Azure.Storage.Blob;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos.Table;
-using Microsoft.Azure.Documents;
 
-namespace DocumentManagement.Common
+namespace DocumentManagement.DAL.Azure
 {
     public class AzureUtils
     {
@@ -46,7 +41,7 @@ namespace DocumentManagement.Common
             _connectionString = connectionString;
         }
 
-
+       
 
         public async Task<CloudBlobContainer> CreateIfNotExistsBlobContainer()
         {

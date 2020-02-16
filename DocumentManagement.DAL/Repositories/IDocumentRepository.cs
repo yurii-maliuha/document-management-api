@@ -1,10 +1,8 @@
-﻿using DocumentManagement.Common.Models;
-using System;
+﻿using DocumentManagement.DAL.Entities;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace DocumentManagement.WebApi.Repositories
+namespace DocumentManagement.DAL.Repositories
 {
     public interface IDocumentRepository
     {
@@ -14,6 +12,6 @@ namespace DocumentManagement.WebApi.Repositories
 
         Task DeleteAsync(string name, string id);
 
-        Task<List<DocumentEntity>> UpdateDocuments(List<DocumentPatchModel> documents);
+        Task<DocumentEntity> UpdateAsync(DocumentEntity document);
     }
 }

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace DocumentManagement.Common.Models
+namespace DocumentManagement.Models
 {
     public class DocumentDTO
     {

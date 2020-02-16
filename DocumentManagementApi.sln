@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocumentManagement.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentManagement.WebApi", "DocumentManagement.WebApi\DocumentManagement.WebApi.csproj", "{A0FFAE20-C3DA-48C3-BA59-A1F8E53649D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentManagement.Common", "DocumentManagement.Common\DocumentManagement.Common.csproj", "{BE3867C0-C86F-469B-B788-FF4AD5AB1A8F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentManagement.DAL", "DocumentManagement.DAL\DocumentManagement.DAL.csproj", "{17B1E3CB-3B35-4613-974B-AD24B4B4A2B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{A0FFAE20-C3DA-48C3-BA59-A1F8E53649D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0FFAE20-C3DA-48C3-BA59-A1F8E53649D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0FFAE20-C3DA-48C3-BA59-A1F8E53649D2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BE3867C0-C86F-469B-B788-FF4AD5AB1A8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BE3867C0-C86F-469B-B788-FF4AD5AB1A8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BE3867C0-C86F-469B-B788-FF4AD5AB1A8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BE3867C0-C86F-469B-B788-FF4AD5AB1A8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17B1E3CB-3B35-4613-974B-AD24B4B4A2B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17B1E3CB-3B35-4613-974B-AD24B4B4A2B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17B1E3CB-3B35-4613-974B-AD24B4B4A2B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17B1E3CB-3B35-4613-974B-AD24B4B4A2B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,12 +1,10 @@
-﻿using DocumentManagement.Common;
+﻿using DocumentManagement.DAL.Azure;
+using DocumentManagement.Models.Exceptions;
 using Microsoft.Azure.Storage.Blob;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace DocumentManagement.WebApi.Helpers
+namespace DocumentManagement.DAL.Helpers
 {
     public class FileUploadHelper : IFileUploadHelper
     {
@@ -20,7 +18,7 @@ namespace DocumentManagement.WebApi.Helpers
         public async Task<string> Upload(Stream file, string blobName)
         {
             var blockBlob = _azureUtils.BlobContainer.GetBlockBlobReference(blobName);
-            blockBlob.Properties.ContentType = "application/pdf";
+            blockBlob.Properties.ContentType = AzureConstants.BlobContentType;
             await blockBlob.UploadFromStreamAsync(file);
             return blockBlob.Uri.AbsoluteUri;
         }
@@ -30,7 +28,7 @@ namespace DocumentManagement.WebApi.Helpers
             CloudBlockBlob blockBlob = _azureUtils.BlobContainer.GetBlockBlobReference(blobName);
             if (!(await blockBlob.ExistsAsync()))
             {
-                throw new DocumentNotFoundException("Can not delete non existed file");
+                throw new DocumentNotFoundException($"Can not delete non existed file {blobName}");
             }
 
             await blockBlob.DeleteAsync();

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace DocumentManagement.WebApi.Helpers
+namespace DocumentManagement.DAL.Helpers
 {
     public interface IFileUploadHelper
     {

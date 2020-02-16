@@ -1,9 +1,9 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
 using System;
 
-namespace DocumentManagement.Common.Models
+namespace DocumentManagement.DAL.Entities
 {
-    public class DocumentEntity : TableEntity
+    public class DocumentEntity: TableEntity
     {
         public DocumentEntity()
         {

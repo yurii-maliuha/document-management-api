@@ -1,7 +1,10 @@
-﻿using DocumentManagement.Common;
-using DocumentManagement.Common.Models;
-using DocumentManagement.WebApi.Helpers;
-using DocumentManagement.WebApi.Repositories;
+﻿using DocumentManagement.Common.Models;
+using DocumentManagement.DAL.Entities;
+using DocumentManagement.DAL.Extensions;
+using DocumentManagement.DAL.Helpers;
+using DocumentManagement.DAL.Repositories;
+using DocumentManagement.Models;
+using DocumentManagement.Models.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -9,7 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DocumentManagement.WebApi.Services
+namespace DocumentManagement.DAL.Services
 {
     public class DocumentService : IDocumentService
     {
@@ -54,10 +57,24 @@ namespace DocumentManagement.WebApi.Services
             return createdDocument.ToDTO();
         }
 
-        public async Task<List<DocumentDTO>> UpdateDocuments(List<DocumentPatchModel> documents)
+        public async Task<List<DocumentDTO>> UpdateDocumentsOrder(List<DocumentPatchModel> documents)
         {
-            var updatedDocuments = await _documentRepository.UpdateDocuments(documents);
-            return updatedDocuments.Select(document => document.ToDTO()).ToList();
+            var updatedDocuments = new List<DocumentDTO>();
+            var documentsEntity = _documentRepository.GetAll();
+            foreach (var document in documentsEntity)
+            {
+                var documentPatch = documents.FirstOrDefault(doc => doc.Id == document.RowKey);
+                if (documentPatch == null)
+                {
+                    throw new DocumentNotFoundException($"Failed to updated document order with id {document.RowKey}.");
+                }
+
+                document.Order = documents.IndexOf(documentPatch);
+                var updatedDocument = await _documentRepository.UpdateAsync(document);
+                updatedDocuments.Add(updatedDocument.ToDTO());
+            }
+
+            return updatedDocuments;
         }
 
         public async Task Delete(string name, string id)

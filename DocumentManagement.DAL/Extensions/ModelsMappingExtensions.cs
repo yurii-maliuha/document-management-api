@@ -1,7 +1,9 @@
-﻿using DocumentManagement.Common.Models;
+﻿
+using DocumentManagement.DAL.Entities;
+using DocumentManagement.Models;
 using System;
 
-namespace DocumentManagement.Common
+namespace DocumentManagement.DAL.Extensions
 {
     public static class ModelsMappingExtensions
     {

@@ -1,12 +1,12 @@
-﻿using DocumentManagement.Common;
-using DocumentManagement.Common.Models;
+﻿using DocumentManagement.DAL.Azure;
+using DocumentManagement.DAL.Entities;
+using DocumentManagement.Models.Exceptions;
 using Microsoft.Azure.Cosmos.Table;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DocumentManagement.WebApi.Repositories
+namespace DocumentManagement.DAL.Repositories
 {
     public class DocumentRepository : IDocumentRepository
     {
@@ -45,22 +45,9 @@ namespace DocumentManagement.WebApi.Repositories
             return createdDocumet;
         }
 
-        public async Task<List<DocumentEntity>> UpdateDocuments(List<DocumentPatchModel> documents)
+        public async Task<DocumentEntity> UpdateAsync(DocumentEntity document)
         {
-            var documentsEntity = GetAll();
-            foreach (var document in documentsEntity)
-            {
-                var updatedDocument = documents.FirstOrDefault(doc => doc.Id == document.RowKey);
-                if (updatedDocument == null)
-                {
-                    throw new DocumentNotFoundException("Unknown document was found in updated collection");
-                }
-
-                document.Order = documents.IndexOf(updatedDocument);
-                await CreateOrUpdateAsync(document);
-            }
-
-            return GetAll().ToList();
+            return await CreateOrUpdateAsync(document);
         }
 
         public async Task DeleteAsync(string name, string id)
@@ -68,7 +55,7 @@ namespace DocumentManagement.WebApi.Repositories
             var documentToDelete = await GetAsync(name, id);
             if(documentToDelete == null)
             {
-                throw new DocumentNotFoundException("Can not delete non existed file");
+                throw new DocumentNotFoundException($"Cannot delete the nonexistent file {name} : {id}");
             }
 
             var deleteOperation = TableOperation.Delete(documentToDelete);
@@ -77,11 +64,6 @@ namespace DocumentManagement.WebApi.Repositories
 
         private async Task<DocumentEntity> CreateOrUpdateAsync(DocumentEntity document)
         {
-            if (document == null)
-            {
-                throw new DocumentNotFoundException("Document entity can not be null.");
-            }
-
             var insertOrMergeOperation = TableOperation.InsertOrMerge(document);
             var result = await _azureUtils.CloudTable.ExecuteAsync(insertOrMergeOperation);
             var insertedDocument = result.Result as DocumentEntity;

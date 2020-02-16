@@ -9,7 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DocumentManagement.Common\DocumentManagement.Common.csproj" />
+    <ProjectReference Include="..\DocumentManagement.DAL\DocumentManagement.DAL.csproj" />
+    <ProjectReference Include="..\DocumentManagement.Models\DocumentManagement.Models.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,12 +1,11 @@
-using DocumentManagement.Common;
-using DocumentManagement.WebApi.Helpers;
-using DocumentManagement.WebApi.Repositories;
-using DocumentManagement.WebApi.Services;
+﻿using DocumentManagement.WebApi.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using DocumentManagement.DAL.Extensions;
 
 namespace DocumentManagement.WebApi
 {
@@ -21,24 +20,13 @@ namespace DocumentManagement.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var azureConfig = new AzureConfiguration();
-            Configuration.Bind("AzureConfiguration", azureConfig);
-            services.AddSingleton(azureConfig);
-
-            services.AddScoped<AzureUtils>(provider =>
-            {
-                return new AzureUtils(azureConfig.StorageConnectionString);
-            });
-
-            services.AddScoped<IFileUploadHelper, FileUploadHelper>();
-            services.AddScoped<IDocumentRepository, DocumentRepository>();
-            services.AddScoped<IDocumentService, DocumentService>();
-
+            var storageConnectionString = Configuration.GetValue<string>("StorageConnectionString");
+            services.AddDocumentManagementServices(storageConnectionString);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
@@ -49,8 +37,10 @@ namespace DocumentManagement.WebApi
                 app.UseHsts();
             }
 
+            app.ConfigureExceptionHandler(logger);
             app.UseHttpsRedirection();
             app.UseMvc();
+            
         }
     }
 }
