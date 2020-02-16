@@ -8,6 +8,8 @@ namespace DocumentManagement.WebApi.Helpers
 {
     public interface IFileUploadHelper
     {
-        Task Upload(Stream file, string fileName);
+        Task<string> Upload(Stream file, string fileName);
+
+        Task Delete(string blobName);
     }
 }

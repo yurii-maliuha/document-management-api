@@ -11,21 +11,69 @@ namespace DocumentManagement.WebApi.Repositories
     public class DocumentRepository : IDocumentRepository
     {
         private AzureUtils _azureUtils;
-        public DocumentRepository(AzureConfiguration configuration)
+
+        public DocumentRepository(AzureUtils azureUtils)
         {
-            _azureUtils = new AzureUtils(configuration.StorageConnectionString);
+            _azureUtils = azureUtils;
         }
 
-        public async Task<DocumentEntity> AddOrUpdateAsync(DocumentEntity document)
+        public IEnumerable<DocumentEntity> GetAll()
+        {
+            var documents = _azureUtils.CloudTable
+                .CreateQuery<DocumentEntity>()
+                .AsEnumerable()
+                .OrderBy(doc => doc.Order);
+
+            return documents;
+        }
+
+        public async Task<DocumentEntity> GetAsync(string name, string id)
+        {
+            TableOperation retrieveOperation = TableOperation.Retrieve<DocumentEntity>(name, id);
+            TableResult result = await _azureUtils.CloudTable.ExecuteAsync(retrieveOperation);
+            DocumentEntity document = result.Result as DocumentEntity;
+
+            return document;
+        }
+
+        public async Task<DocumentEntity> CreateAsync(DocumentEntity document)
+        {
+            var lastDocument = GetAll().LastOrDefault();
+            document.Order = lastDocument != null ? lastDocument.Order + 1 : 0;
+            var createdDocumet = await CreateOrUpdateAsync(document);
+
+            return createdDocumet;
+        }
+
+        public async Task<List<DocumentEntity>> UpdateDocuments(List<DocumentEntity> documents)
+        {
+            foreach (var document in documents)
+            {
+                await CreateOrUpdateAsync(document);
+            }
+
+            return GetAll().ToList();
+        }
+
+        public async Task DeleteAsync(string name, string id)
+        {
+            var documentToDelete = await GetAsync(name, id);
+            if(documentToDelete != null)
+            {
+                var deleteOperation = TableOperation.Delete(documentToDelete);
+                await _azureUtils.CloudTable.ExecuteAsync(deleteOperation);
+            }
+        }
+
+        private async Task<DocumentEntity> CreateOrUpdateAsync(DocumentEntity document)
         {
             if (document == null)
             {
                 throw new ArgumentNullException("Document entity can not be null.");
             }
 
-            var documentTable = await _azureUtils.CreateIfNotExistsTable();
             var insertOrMergeOperation = TableOperation.InsertOrMerge(document);
-            var result = await documentTable.ExecuteAsync(insertOrMergeOperation);
+            var result = await _azureUtils.CloudTable.ExecuteAsync(insertOrMergeOperation);
             var insertedDocument = result.Result as DocumentEntity;
 
             return insertedDocument;

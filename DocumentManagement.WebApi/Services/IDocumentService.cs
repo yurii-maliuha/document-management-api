@@ -10,6 +10,12 @@ namespace DocumentManagement.WebApi.Services
 {
     public interface IDocumentService
     {
+        IEnumerable<DocumentDTO> GetAll();
+
         Task<DocumentDTO> Create(IFormFile file);
+
+        Task Delete(string name, string id);
+
+        Task<List<DocumentDTO>> UpdateDocuments(List<DocumentDTO> documents);
     }
 }

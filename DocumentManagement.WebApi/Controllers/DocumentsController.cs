@@ -19,9 +19,9 @@ namespace DocumentManagement.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public IEnumerable<DocumentDTO> GetAll()
         {
-            return new string[] { "files1", "files2" };
+            return _documentService.GetAll();
         }
 
         [HttpPost]
@@ -29,6 +29,20 @@ namespace DocumentManagement.Controllers
         {
             var document = await _documentService.Create(file);
             return document;
+        }
+
+        [HttpPatch]
+        public async Task<List<DocumentDTO>> Update([FromBody] List<DocumentDTO> documents)
+        {
+            var updatedDocuments = await _documentService.UpdateDocuments(documents);
+            return updatedDocuments;
+        }
+
+        [HttpDelete]
+        [Route("{name}/{id}")]
+        public async Task Delete(string name, string id)
+        {
+            await _documentService.Delete(name, id);
         }
     }
 }

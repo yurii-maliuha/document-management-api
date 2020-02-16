@@ -3,7 +3,7 @@ using System;
 
 namespace DocumentManagement.Common.Models
 {
-    public class DocumentEntity: TableEntity
+    public class DocumentEntity : TableEntity
     {
         public DocumentEntity()
         {
@@ -15,10 +15,10 @@ namespace DocumentManagement.Common.Models
             RowKey = Id.ToString();
         }
 
-        public string Name { get; set; }
-
         public string Location { get; set; }
 
         public long FileSize { get; set; }
+
+        public int Order { get; set; }
     }
 }

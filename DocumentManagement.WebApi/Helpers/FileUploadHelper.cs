@@ -10,20 +10,25 @@ namespace DocumentManagement.WebApi.Helpers
 {
     public class FileUploadHelper : IFileUploadHelper
     {
-        private readonly AzureConfiguration _configuration;
         private AzureUtils _azureUtils;
 
-        public FileUploadHelper(AzureConfiguration configuration)
+        public FileUploadHelper(AzureUtils azureUtils)
         {
-            _configuration = configuration;
-            _azureUtils = new AzureUtils(_configuration.StorageConnectionString);
+            _azureUtils = azureUtils;
         }
 
-        public async Task Upload(Stream file, string fileName)
+        public async Task<string> Upload(Stream file, string blobName)
         {
-            var container = await _azureUtils.CreateIfNotExistsBlobContainer();
-            CloudBlockBlob blockBlob = container.GetBlockBlobReference(fileName);
-            blockBlob.UploadFromStream(file);
+            var blockBlob = _azureUtils.BlobContainer.GetBlockBlobReference(blobName);
+            blockBlob.Properties.ContentType = "application/pdf";
+            await blockBlob.UploadFromStreamAsync(file);
+            return blockBlob.Uri.AbsoluteUri;
+        }
+
+        public async Task Delete(string blobName)
+        {
+            CloudBlockBlob blockBlob = _azureUtils.BlobContainer.GetBlockBlobReference(blobName);
+            await blockBlob.DeleteIfExistsAsync();
         }
     }
 }

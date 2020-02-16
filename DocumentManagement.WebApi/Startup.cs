@@ -25,9 +25,15 @@ namespace DocumentManagement.WebApi
             Configuration.Bind("AzureConfiguration", azureConfig);
             services.AddSingleton(azureConfig);
 
+            services.AddScoped<AzureUtils>(provider =>
+            {
+                return new AzureUtils(azureConfig.StorageConnectionString);
+            });
+
             services.AddScoped<IFileUploadHelper, FileUploadHelper>();
             services.AddScoped<IDocumentRepository, DocumentRepository>();
             services.AddScoped<IDocumentService, DocumentService>();
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

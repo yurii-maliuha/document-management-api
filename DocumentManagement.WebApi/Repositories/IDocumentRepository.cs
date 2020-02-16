@@ -8,6 +8,12 @@ namespace DocumentManagement.WebApi.Repositories
 {
     public interface IDocumentRepository
     {
-        Task<DocumentEntity> AddOrUpdateAsync(DocumentEntity document);
+        IEnumerable<DocumentEntity> GetAll();
+
+        Task<DocumentEntity> CreateAsync(DocumentEntity document);
+
+        Task DeleteAsync(string name, string id);
+
+        Task<List<DocumentEntity>> UpdateDocuments(List<DocumentEntity> documents);
     }
 }

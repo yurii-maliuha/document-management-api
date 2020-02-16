@@ -12,10 +12,41 @@ namespace DocumentManagement.Common
     public class AzureUtils
     {
         private readonly string _connectionString;
+        private CloudBlobContainer _blobContainer;
+        private CloudTable _cloudTable;
+
+        public CloudBlobContainer BlobContainer
+        {
+            get
+            {
+                if (_blobContainer == null)
+                {
+                    _blobContainer = CreateIfNotExistsBlobContainer().Result;
+                }
+
+                return _blobContainer;
+            }
+        }
+
+        public CloudTable CloudTable
+        {
+            get
+            {
+                if (_cloudTable == null)
+                {
+                    _cloudTable = CreateIfNotExistsTable().Result;
+                }
+
+                return _cloudTable;
+            }
+        }
+
         public AzureUtils(string connectionString)
         {
             _connectionString = connectionString;
         }
+
+
 
         public async Task<CloudBlobContainer> CreateIfNotExistsBlobContainer()
         {
@@ -23,24 +54,17 @@ namespace DocumentManagement.Common
             var blobClient = storageAccount.CreateCloudBlobClient();
             var container = blobClient.GetContainerReference(AzureConstants.BlobContainerName);
             await container.CreateIfNotExistsAsync();
+            var contPermission = new BlobContainerPermissions() { PublicAccess = BlobContainerPublicAccessType.Blob };
+            container.SetPermissions(contPermission);
             return container;
         }
 
         public async Task<CloudTable> CreateIfNotExistsTable()
         {
-            CloudTable table = null;
-            try
-            {
-                var storageAccount = Microsoft.Azure.Cosmos.Table.CloudStorageAccount.Parse(_connectionString);
-                var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
-                table = tableClient.GetTableReference(AzureConstants.CosmoTableName);
-                await table.CreateIfNotExistsAsync();
-
-            }
-            catch(Exception ex)
-            {
-                var exx = ex;
-            }
+            var storageAccount = Microsoft.Azure.Cosmos.Table.CloudStorageAccount.Parse(_connectionString);
+            var tableClient = storageAccount.CreateCloudTableClient(new TableClientConfiguration());
+            var table = tableClient.GetTableReference(AzureConstants.CosmoTableName);
+            await table.CreateIfNotExistsAsync();
 
             return table;
         }
