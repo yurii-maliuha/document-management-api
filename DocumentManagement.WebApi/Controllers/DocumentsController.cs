@@ -19,20 +19,30 @@ namespace DocumentManagement.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<DocumentDTO> GetAll()
+        public ActionResult<IEnumerable<DocumentDTO>> GetAll()
         {
-            return _documentService.GetAll();
+            return Ok(_documentService.GetAll());
         }
 
         [HttpPost]
-        public async Task<DocumentDTO> Create(IFormFile file)
+        public async Task<ActionResult<DocumentDTO>> Create(IFormFile file)
         {
+            if (file.Length / 1000000 >= 5)
+            {
+                return BadRequest("File size succed max value 5MB.");
+            }
+
+            if (file.ContentType != "application/pdf")
+            {
+                return BadRequest("Only pdf files are allowed.");
+            }
+
             var document = await _documentService.Create(file);
-            return document;
+            return CreatedAtAction(nameof(Create), new { id = document.Id }, document);
         }
 
         [HttpPatch]
-        public async Task<List<DocumentDTO>> Update([FromBody] List<DocumentDTO> documents)
+        public async Task<ActionResult<List<DocumentDTO>>> Update([FromBody] List<DocumentPatchModel> documents)
         {
             var updatedDocuments = await _documentService.UpdateDocuments(documents);
             return updatedDocuments;
@@ -40,9 +50,10 @@ namespace DocumentManagement.Controllers
 
         [HttpDelete]
         [Route("{name}/{id}")]
-        public async Task Delete(string name, string id)
+        public async Task<ActionResult> Delete(string name, string id)
         {
             await _documentService.Delete(name, id);
+            return NoContent();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using DocumentManagement.Common.Models;
+﻿using DocumentManagement.Common;
+using DocumentManagement.Common.Models;
 using DocumentManagement.WebApi.Helpers;
 using DocumentManagement.WebApi.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -25,13 +26,7 @@ namespace DocumentManagement.WebApi.Services
         public IEnumerable<DocumentDTO> GetAll()
         {
             var documents =_documentRepository.GetAll()
-                .Select(document => new DocumentDTO()
-                {
-                    Id = Guid.Parse(document.RowKey),
-                    Name = document.PartitionKey,
-                    Location = document.Location,
-                    FileSize = document.FileSize
-                });
+                .Select(document => document.ToDTO());
 
             return documents;
         }
@@ -56,36 +51,13 @@ namespace DocumentManagement.WebApi.Services
 
             var createdDocument = await _documentRepository.CreateAsync(documentEntity);
 
-            return new DocumentDTO()
-            {
-                Id = Guid.Parse(createdDocument.RowKey),
-                Name = createdDocument.PartitionKey,
-                Location = createdDocument.Location,
-                FileSize = createdDocument.FileSize
-            };
+            return createdDocument.ToDTO();
         }
 
-        public async Task<List<DocumentDTO>> UpdateDocuments(List<DocumentDTO> documents)
+        public async Task<List<DocumentDTO>> UpdateDocuments(List<DocumentPatchModel> documents)
         {
-            var documentsEntity = documents.Select((document, index) =>
-                new DocumentEntity(document.Id, document.Name)
-                {
-                    FileSize = document.FileSize,
-                    Location = document.Location,
-                    Order = index
-                })
-                .ToList();
-
-            var updatedDocuments = await _documentRepository.UpdateDocuments(documentsEntity);
-
-            return updatedDocuments.Select(document =>
-                new DocumentDTO()
-                {
-                    Id = Guid.Parse(document.RowKey),
-                    Name = document.PartitionKey,
-                    Location = document.Location,
-                    FileSize = document.FileSize
-                }).ToList();
+            var updatedDocuments = await _documentRepository.UpdateDocuments(documents);
+            return updatedDocuments.Select(document => document.ToDTO()).ToList();
         }
 
         public async Task Delete(string name, string id)

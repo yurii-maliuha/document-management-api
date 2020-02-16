@@ -28,7 +28,12 @@ namespace DocumentManagement.WebApi.Helpers
         public async Task Delete(string blobName)
         {
             CloudBlockBlob blockBlob = _azureUtils.BlobContainer.GetBlockBlobReference(blobName);
-            await blockBlob.DeleteIfExistsAsync();
+            if (!(await blockBlob.ExistsAsync()))
+            {
+                throw new DocumentNotFoundException("Can not delete non existed file");
+            }
+
+            await blockBlob.DeleteAsync();
         }
     }
 }

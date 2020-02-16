@@ -16,6 +16,6 @@ namespace DocumentManagement.WebApi.Services
 
         Task Delete(string name, string id);
 
-        Task<List<DocumentDTO>> UpdateDocuments(List<DocumentDTO> documents);
+        Task<List<DocumentDTO>> UpdateDocuments(List<DocumentPatchModel> documents);
     }
 }

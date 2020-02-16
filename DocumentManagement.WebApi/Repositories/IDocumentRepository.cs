@@ -14,6 +14,6 @@ namespace DocumentManagement.WebApi.Repositories
 
         Task DeleteAsync(string name, string id);
 
-        Task<List<DocumentEntity>> UpdateDocuments(List<DocumentEntity> documents);
+        Task<List<DocumentEntity>> UpdateDocuments(List<DocumentPatchModel> documents);
     }
 }
